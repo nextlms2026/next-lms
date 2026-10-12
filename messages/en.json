@@ -1,0 +1,9 @@
+{
+  "app": {
+    "name": "next-lms",
+    "tagline": "Run your classes, students, and learning in one place."
+  },
+  "home": {
+    "comingSoon": "Sign-in arrives in the next milestone."
+  }
+}
