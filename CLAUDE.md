@@ -22,7 +22,7 @@ Next.js 16 App Router (Cache Components on) · TypeScript strict · Supabase (Po
 Next.js 16 differs from older versions: middleware is `src/proxy.ts`; session reads must be inside `<Suspense>`; never `'use cache'` tenant data (ADR-011). Check `node_modules/next/dist/docs/` before using unfamiliar Next APIs.
 
 ## Commands
-`npm run dev` · `npm run check` (typecheck + lint + unit tests + build) · `npm run test:e2e` · `npm run db:check` (verify env + DB + RLS switch) · `npm run db:generate` / `db:migrate` · `npm run format`
+`npm run dev` · `npm run check` (typecheck + lint + unit tests + build) · `npm run test:rls` (RLS isolation, hits dev DB) · `npm run test:e2e` (prod build on :3100) · `npm run db:check` (verify env + DB + RLS switch) · `npm run db:generate` / `db:migrate` · `npm run format`
 
 ## Non-negotiable rules
 1. **All request-scoped DB access goes through `db.rls(fn)`** from `@/server/db` (RLS enforced). The RLS-bypassing `getAdminDb()` may only be used in the call sites listed in SECURITY.md §Admin client; adding one = update that list + `adminDbAllowlist` in `eslint.config.mjs` + justify.

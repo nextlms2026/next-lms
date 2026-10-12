@@ -52,3 +52,13 @@ Format: context → decision → consequences. Newest at the bottom. Status: Acc
 ## ADR-012 ESLint guards the RLS-bypass boundary (2026-10-12)
 **Decision:** `no-restricted-imports` forbids importing `@/server/db/admin` and `@/server/db/client` outside `src/server/db/`, except files in `adminDbAllowlist` (`eslint.config.mjs`), which must mirror SECURITY.md.
 **Consequences:** Accidental RLS bypass fails lint/CI instead of relying on review.
+
+## ADR-013 Org creation via SECURITY DEFINER SQL function, not the admin client (2026-10-12)
+**Context:** Creating an org must insert the org and the creator's owner membership before any membership exists, so no RLS policy can allow it for the caller.
+**Decision:** `app.create_organization()` (definer, `search_path=''`, in non-exposed `app` schema) does both inserts atomically using `auth.uid()`, validates inputs, and caps orgs per creator. The app calls it through `db.rls`. Users have no INSERT/DELETE privilege on identity tables.
+**Consequences:** No RLS-bypassing app connection for this flow; the rule lives in the database and is covered by RLS tests. Pattern reused for invitation acceptance and student claims where possible.
+
+## ADR-014 Forms: useActionState + server Zod; RHF only for complex forms (2026-10-12)
+**Context:** Next 16 forms work natively with Server Actions and progressive enhancement.
+**Decision:** Standard forms use `useActionState` with Server Actions returning `FormState` (i18n message keys, echoed non-secret values). React Hook Form is used only where client-side dynamic state is substantial (e.g. bulk marks entry).
+**Consequences:** Less client JS, one validation path (server), forms work before hydration.

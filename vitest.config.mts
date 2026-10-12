@@ -14,7 +14,18 @@ export default defineConfig({
           include: ["tests/unit/**/*.test.{ts,tsx}", "src/**/*.test.{ts,tsx}"],
         },
       },
-      // "rls" project (tests/rls, against the dev Supabase project) is added in M2.
+      {
+        // Runs against the dev Supabase project (ADR-006). Needs .env.local.
+        extends: true,
+        test: {
+          name: "rls",
+          environment: "node",
+          include: ["tests/rls/**/*.test.ts"],
+          testTimeout: 30_000,
+          hookTimeout: 60_000,
+          fileParallelism: false,
+        },
+      },
     ],
   },
 });

@@ -1,6 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
+// Tests run against a production build on its own port (fast, realistic, and
+// does not collide with `npm run dev` on 3000). Override with E2E_BASE_URL.
+const port = 3100;
+const baseURL = process.env.E2E_BASE_URL ?? `http://localhost:${port}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -8,6 +11,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",
+  expect: { timeout: 10_000 },
   use: { baseURL, trace: "on-first-retry" },
   projects: [
     { name: "desktop-chrome", use: { ...devices["Desktop Chrome"] } },
@@ -17,9 +21,9 @@ export default defineConfig({
   webServer: process.env.E2E_BASE_URL
     ? undefined
     : {
-        command: "npm run dev",
+        command: `npm run build && npm run start -- -p ${port}`,
         url: baseURL,
         reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
+        timeout: 300_000,
       },
 });

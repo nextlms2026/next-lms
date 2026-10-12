@@ -28,12 +28,17 @@ Drizzle connects as a privileged role, which bypasses RLS. To keep RLS as a real
 | Mutation | Server Action → Zod → `require*()` → `db.rls` → `revalidatePath` → result union |
 | File download | `GET /api/files/[resourceId]` → access check via `db.rls` → 60s signed URL redirect |
 | File upload | Server Action checks access + type/size → returns signed upload URL → client uploads directly to Storage → action records the row |
-| Auth callback | `GET /auth/callback` route handler |
+| Email links (confirm, recovery) | `GET /auth/confirm` handles `token_hash` (recommended template, any device), `code` (default template; email already verified by Supabase — if the session step fails on another device, signup shows "confirmed, sign in", recovery shows an error) and Supabase `error` params → `safeRedirectPath(next)` |
+| Entry & optimistic routing | `src/proxy.ts`: `/` → `/login` or `/dashboard`; signed-in users skip auth pages; signed-out users on app pages → `/login?next=…`. UX only — pages and RLS still enforce access. No public landing page in the app (a marketing site, if wanted, lives separately). |
+| Post-login routing | `/dashboard` **page** (not a route handler — the client router follows handler redirects without updating the URL) → `/onboarding`, `/o/[slug]` or `/orgs` |
+| Forms | Client form + `useActionState` + Server Action returning `FormState` (message keys, echoed values); Zod runs on the server. React Hook Form reserved for complex dynamic forms (e.g. marks grid) — ADR-014 |
 
 Authz helpers (`src/server/authz.ts`): `requireUser()`, `requireOrgRole(orgSlug, roles)`, `requireClassAccess(classId, mode)`, `requireStudentSelf()`. They resolve the org from the URL slug + membership, return typed context, and call `notFound()` on failure. They are UX-level/early-exit checks; RLS is the backstop.
 
 ## Next.js 16 specifics
 - **Proxy** (`src/proxy.ts`) replaces middleware. It only refreshes sessions; it is not authorization.
+- **Identity is request-time:** `getVerifiedClaims()` calls `await connection()` so session checks never run inside a prerender/prefetch.
+- Sign-in gated layouts export `instant = false` (an auth redirect can never pass dev instant-navigation validation).
 - **Cache Components** is on. Anything reading cookies/session must render inside `<Suspense>` (build error otherwise). Session-dependent helpers may use `'use cache: private'`.
 - **No `'use cache'` / `'use cache: remote'` on tenant data** without explicit review: a shared server cache could serve one user's RLS-filtered rows to another, and cache keys are stored in plain text (ADR-011).
 - Docs for this exact version are bundled in `node_modules/next/dist/docs/` — read them before using unfamiliar APIs (see AGENTS.md).

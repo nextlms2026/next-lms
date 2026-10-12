@@ -3,7 +3,148 @@
     "name": "next-lms",
     "tagline": "Run your classes, students, and learning in one place."
   },
-  "home": {
-    "comingSoon": "Sign-in arrives in the next milestone."
+  "common": {
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Changes saved.",
+    "continue": "Continue",
+    "loading": "Loading…",
+    "or": "or"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "fullName": "Full name",
+    "passwordHint": "At least 8 characters.",
+    "signIn": {
+      "title": "Sign in",
+      "description": "Welcome back. Sign in to continue.",
+      "submit": "Sign in",
+      "pending": "Signing in…",
+      "forgot": "Forgot password?",
+      "noAccount": "New to next-lms?",
+      "createAccount": "Create an account",
+      "linkError": "That link has expired or was already used. If you already confirmed your email, just sign in. To reset your password, request a new link.",
+      "confirmedNotice": "Your email is confirmed. Sign in to continue."
+    },
+    "signUp": {
+      "title": "Create your account",
+      "description": "Set up next-lms for your teaching in a couple of minutes.",
+      "submit": "Create account",
+      "pending": "Creating account…",
+      "haveAccount": "Already have an account?",
+      "terms": "By creating an account you agree to keep student information confidential and use it only for teaching."
+    },
+    "checkEmail": {
+      "title": "Check your email",
+      "description": "We've sent you a confirmation link. Open it on any device to finish creating your account.",
+      "spam": "Can't find it? Check your spam folder, or try signing up again in a few minutes.",
+      "back": "Back to sign in"
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "description": "Enter your email and we'll send you a link to choose a new password.",
+      "submit": "Send reset link",
+      "pending": "Sending…",
+      "back": "Back to sign in"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "description": "You'll stay signed in after changing it.",
+      "submit": "Update password",
+      "pending": "Updating…"
+    },
+    "signOut": "Sign out"
+  },
+  "onboarding": {
+    "title": "Create your workspace",
+    "description": "A workspace holds your classes, students and team. You can change these settings later.",
+    "submit": "Create workspace",
+    "pending": "Creating…"
+  },
+  "orgs": {
+    "pickerTitle": "Your workspaces",
+    "pickerDescription": "Choose a workspace to open.",
+    "createAnother": "Create another workspace",
+    "switch": "Switch workspace",
+    "fields": {
+      "name": "Workspace name",
+      "nameHint": "For example your own name, or your institute's name.",
+      "kind": "Type",
+      "kindIndividual": "Just me — independent teacher",
+      "kindInstitute": "Institute — several teachers",
+      "country": "Country",
+      "timezone": "Time zone",
+      "timezoneHint": "Class times and dates are shown in this time zone.",
+      "currency": "Currency",
+      "defaultLocale": "Date and number format",
+      "weekStart": "Week starts on"
+    },
+    "roles": {
+      "owner": "Owner",
+      "admin": "Administrator",
+      "teacher": "Teacher"
+    },
+    "kindLabel": {
+      "individual": "Workspace",
+      "institute": "Institute"
+    }
+  },
+  "nav": {
+    "today": "Today",
+    "settings": "Settings",
+    "account": "Your account",
+    "menu": "Menu"
+  },
+  "today": {
+    "greeting": "Welcome, {name}",
+    "greetingNoName": "Welcome",
+    "emptyTitle": "No classes scheduled today",
+    "emptyBody": "Once you add classes and timetables, today's sessions appear here so you can take attendance in a few taps."
+  },
+  "settings": {
+    "title": "Workspace settings",
+    "description": "Regional settings used for dates, times and fees across this workspace.",
+    "readOnly": "Only the workspace owner can change these settings."
+  },
+  "account": {
+    "title": "Your account",
+    "description": "Your name and contact details are visible to the workspaces you belong to.",
+    "phone": "Mobile number",
+    "phoneHint": "International format, e.g. +94771234567. Optional.",
+    "changePassword": "To change your password, use “Forgot password” on the sign-in page."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page doesn't exist, or you don't have access to it.",
+    "home": "Go to your workspaces"
+  },
+  "errors": {
+    "required": "This field is required.",
+    "tooLong": "This is too long.",
+    "invalidEmail": "Enter a valid email address.",
+    "invalidPhone": "Use international format starting with +, e.g. +94771234567.",
+    "invalidCountry": "Choose a country.",
+    "invalidTimezone": "Choose a valid time zone.",
+    "invalidCurrency": "Choose a valid currency.",
+    "invalidLocale": "Choose a valid format.",
+    "passwordTooShort": "Use at least 8 characters.",
+    "passwordTooLong": "Use at most 72 characters.",
+    "passwordTooWeak": "That password is too easy to guess. Try a longer one.",
+    "passwordsDontMatch": "The passwords don't match.",
+    "samePassword": "Choose a password different from your current one.",
+    "invalidCredentials": "Incorrect email or password.",
+    "emailNotConfirmed": "Please confirm your email first — check your inbox for the link.",
+    "rateLimited": "Too many attempts. Please wait a few minutes and try again.",
+    "signUpFailed": "We couldn't create your account. Please try again.",
+    "orgLimit": "You've reached the maximum number of workspaces.",
+    "notAllowed": "You don't have permission to do that.",
+    "generic": "Something went wrong. Please try again."
+  },
+  "messages": {
+    "saved": "Changes saved.",
+    "resetEmailSent": "If an account exists for that email, a reset link is on its way."
   }
 }

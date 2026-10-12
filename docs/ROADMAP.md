@@ -9,9 +9,9 @@ Each milestone is a vertical slice (migration + RLS + server + UI + tests). Scop
 |---|---|---|---|
 | M0 | Foundation docs + CLAUDE.md | – | ✅ |
 | M1 | Scaffold: Next.js, TS strict, Tailwind/shadcn, ESLint/Prettier, Vitest/Playwright, env validation, Supabase dev wiring, Drizzle + `db.rls`, `git init` | M0; user creates Supabase dev project | ✅ |
-| M2 | Auth, profiles, org creation, memberships, RLS helper functions, first isolation tests, app shell | M1 | ⬜ |
+| M2 | Auth, profiles, org creation, memberships, RLS helper functions, first isolation tests, app shell | M1 | ✅ (grade template choice moved to M4) |
 | M3 | Team: invitations, roles, deactivation, audit log | M2 | ⬜ |
-| M4 | Catalogue: subjects, grades (seeded), locations | M2 | ⬜ |
+| M4 | Catalogue: subjects, grades (seeded from a template chosen on first visit), locations | M2 | ⬜ |
 | M5 | Students, classes, teacher assignment, enrolments, claim codes, student login | M3, M4 | ⬜ |
 | M6 | Schedules → sessions, timetable, Today screen, attendance | M5 | ⬜ |
 | M7 | Lessons, resources, storage, signed downloads, video embeds | M5 | ⬜ |

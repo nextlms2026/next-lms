@@ -2,9 +2,27 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { clientEnv } from "@/env/client";
 
+// Optimistic routing only — NOT authorization. Pages (require*), actions and
+// RLS enforce access on their own (docs/SECURITY.md).
+const AUTH_PAGES = ["/login", "/signup", "/forgot-password", "/check-email"];
+const SIGNED_IN_PREFIXES = [
+  "/dashboard",
+  "/onboarding",
+  "/orgs",
+  "/account",
+  "/reset-password",
+  "/o/",
+];
+
+function matches(pathname: string, prefixes: readonly string[]) {
+  return prefixes.some(
+    (p) => pathname === p || pathname.startsWith(p.endsWith("/") ? p : `${p}/`),
+  );
+}
+
 /**
- * Refreshes the Supabase session cookie on each request.
- * This is NOT authorization — pages, actions, and RLS enforce access (docs/SECURITY.md).
+ * Refreshes the Supabase session cookie on each request, then sends signed-out
+ * visitors to /login and signed-in visitors away from the auth pages.
  */
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -36,9 +54,32 @@ export async function proxy(request: NextRequest) {
 
   // Validates the JWT and refreshes it if expired. Do not run code between
   // client creation and this call.
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  const signedIn = Boolean(data?.claims);
 
-  return response;
+  const { pathname, search } = request.nextUrl;
+  let target: string | null = null;
+  if (pathname === "/") {
+    target = signedIn ? "/dashboard" : "/login";
+  } else if (signedIn && matches(pathname, AUTH_PAGES)) {
+    target = "/dashboard";
+  } else if (!signedIn && matches(pathname, SIGNED_IN_PREFIXES)) {
+    target =
+      pathname === "/dashboard"
+        ? "/login"
+        : `/login?next=${encodeURIComponent(pathname + search)}`;
+  }
+
+  if (!target) return response;
+
+  // Carry any refreshed session cookies over to the redirect.
+  const redirect = NextResponse.redirect(new URL(target, request.url));
+  for (const cookie of response.cookies.getAll()) redirect.cookies.set(cookie);
+  for (const h of ["cache-control", "expires", "pragma"]) {
+    const v = response.headers.get(h);
+    if (v) redirect.headers.set(h, v);
+  }
+  return redirect;
 }
 
 export const config = {
