@@ -56,7 +56,13 @@
       "submit": "Update password",
       "pending": "Updating…"
     },
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "or": "or",
+    "google": {
+      "continue": "Continue with Google",
+      "pending": "Opening Google…",
+      "failed": "Google sign-in did not complete. Please try again, or sign in with your email and password."
+    }
   },
   "onboarding": {
     "title": "Create your workspace",
@@ -96,7 +102,9 @@
     "today": "Today",
     "settings": "Settings",
     "account": "Your account",
-    "menu": "Menu"
+    "menu": "Menu",
+    "team": "Team",
+    "activity": "Activity"
   },
   "today": {
     "greeting": "Welcome, {name}",
@@ -141,10 +149,111 @@
     "signUpFailed": "We couldn't create your account. Please try again.",
     "orgLimit": "You've reached the maximum number of workspaces.",
     "notAllowed": "You don't have permission to do that.",
-    "generic": "Something went wrong. Please try again."
+    "generic": "Something went wrong. Please try again.",
+    "alreadyMember": "That person is already a member of this workspace.",
+    "lastOwner": "A workspace must keep at least one owner. Make someone else an owner first.",
+    "invalidInvitation": "This invitation is no longer valid. Ask for a new link.",
+    "invitationEmailMismatch": "This invitation was sent to a different email address. Sign in with that address to accept it.",
+    "googleUnavailable": "Google sign-in is not available right now. Please use your email and password."
   },
   "messages": {
     "saved": "Changes saved.",
     "resetEmailSent": "If an account exists for that email, a reset link is on its way."
+  },
+  "team": {
+    "title": "Team",
+    "description": "People who teach or administer in this workspace.",
+    "members": "Members",
+    "you": "you",
+    "unnamed": "Unnamed member",
+    "inactive": "Inactive",
+    "joined": "Joined {date}",
+    "actionsFor": "Actions for {name}",
+    "changeRole": "Role",
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "leave": "Leave workspace",
+    "cancel": "Cancel",
+    "confirmDeactivate": {
+      "title": "Deactivate {name}?",
+      "body": "They will immediately lose access to this workspace. Their past records (attendance, marks, materials) are kept, and you can reactivate them later."
+    },
+    "confirmLeave": {
+      "title": "Leave this workspace?",
+      "body": "You will lose access immediately. An owner or administrator can invite you back."
+    },
+    "invite": {
+      "title": "Invite a teacher or administrator",
+      "email": "Email address",
+      "role": "Role",
+      "submit": "Create invite link",
+      "pending": "Creating…",
+      "created": "Invitation created for {email} as {role}. Send them this link — it works once and expires in 7 days.",
+      "linkLabel": "Invitation link",
+      "linkHint": "They must sign in (or sign up) with that same email address to accept. If they sign up without the link, the invitation still appears for them after signing in.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "whatsapp": "Share on WhatsApp",
+      "another": "Invite someone else",
+      "shareText": "You are invited to join {org} on next-lms: {link}"
+    },
+    "pending": {
+      "title": "Pending invitations",
+      "empty": "No pending invitations.",
+      "expires": "Expires {date}",
+      "revoke": "Revoke",
+      "resendHint": "Lost the link? Invite the same email again — a new link replaces the old one."
+    },
+    "mine": {
+      "title": "You have been invited",
+      "item": "{org} — as {role}"
+    },
+    "accept": {
+      "title": "Join {org}",
+      "description": "You have been invited as {role}. This invitation is for {email}.",
+      "signInFirst": "Sign in or create an account with that email address to accept.",
+      "signIn": "Sign in to accept",
+      "createAccount": "Create an account",
+      "signedInAs": "Signed in as {email}.",
+      "submit": "Accept invitation",
+      "pending": "Joining…",
+      "switchAccount": "Use a different account",
+      "home": "Go to your workspaces",
+      "status": {
+        "invalid": {
+          "title": "Invitation not found",
+          "body": "This link is not valid. Ask the person who invited you for a new link."
+        },
+        "expired": {
+          "title": "Invitation expired",
+          "body": "This invitation has expired. Ask the person who invited you to send a new one."
+        },
+        "used": {
+          "title": "Invitation already used",
+          "body": "This invitation has already been accepted. Sign in to open the workspace."
+        },
+        "revoked": {
+          "title": "Invitation cancelled",
+          "body": "This invitation was cancelled or replaced by a newer link. Ask for a new one if needed."
+        }
+      }
+    }
+  },
+  "activity": {
+    "title": "Activity",
+    "description": "Changes to the team and invitations in this workspace. Visible to owners and administrators.",
+    "empty": "No activity yet.",
+    "someone": "Someone",
+    "actions": {
+      "invitation_created": "invited someone as {role}",
+      "invitation_revoked": "cancelled an invitation ({role})",
+      "invitation_accepted": "accepted an invitation",
+      "member_joined": "joined as {role}",
+      "member_role_changed": "changed a member from {from} to {to}",
+      "member_deactivated": "deactivated a member ({role})",
+      "member_reactivated": "reactivated a member ({role})",
+      "member_left": "left the workspace",
+      "unknown": "made a change"
+    }
   }
 }

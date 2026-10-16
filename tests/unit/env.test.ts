@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { migrationUrl, serverEnvSchema } from "@/env/schema";
+import { clientEnvSchema, migrationUrl, serverEnvSchema } from "@/env/schema";
 
 const valid = {
   SUPABASE_SECRET_KEY: "sb_secret_abc",
@@ -68,5 +68,38 @@ describe("migrationUrl", () => {
     expect(
       migrationUrl({ DATABASE_URL: "postgresql://u:p%40x@host:6543/postgres" }),
     ).toBe("postgresql://u:p%40x@host:5432/postgres");
+  });
+});
+
+describe("NEXT_PUBLIC_GOOGLE_AUTH_ENABLED", () => {
+  const base = {
+    NEXT_PUBLIC_SUPABASE_URL: "https://x.supabase.co",
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_x",
+    NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
+  };
+  it("is off unless explicitly 'true'", () => {
+    expect(clientEnvSchema.parse(base).NEXT_PUBLIC_GOOGLE_AUTH_ENABLED).toBe(
+      false,
+    );
+    expect(
+      clientEnvSchema.parse({
+        ...base,
+        NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: "false",
+      }).NEXT_PUBLIC_GOOGLE_AUTH_ENABLED,
+    ).toBe(false);
+    expect(
+      clientEnvSchema.parse({
+        ...base,
+        NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: "true",
+      }).NEXT_PUBLIC_GOOGLE_AUTH_ENABLED,
+    ).toBe(true);
+  });
+  it("rejects typos instead of silently disabling", () => {
+    expect(
+      clientEnvSchema.safeParse({
+        ...base,
+        NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: "yes",
+      }).success,
+    ).toBe(false);
   });
 });

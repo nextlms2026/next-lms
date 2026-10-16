@@ -29,10 +29,12 @@ export type E2EUser = {
 };
 
 /** Confirmed user created through the Auth admin API (no email is sent). */
-export async function createE2EUser(label: string): Promise<E2EUser> {
+export async function createE2EUser(
+  label: string,
+  fullName = "Esha Example",
+): Promise<E2EUser> {
   const email = `e2e-${randomUUID().slice(0, 8)}-${label}@example.com`;
   const password = `Pw-${randomUUID()}`;
-  const fullName = "Esha Example";
   const { data, error } = await authAdmin().createUser({
     email,
     password,
@@ -52,4 +54,21 @@ export async function deleteE2EUser(user: E2EUser) {
     await sql.end();
   }
   await authAdmin().deleteUser(user.id);
+}
+
+/** Creates a workspace owned by `owner` through the real SQL function (as that user). */
+export async function createE2EOrg(owner: E2EUser, name: string) {
+  const slug = `e2e-${randomUUID().slice(0, 8)}`;
+  const sql = postgres(required("DATABASE_URL"), { prepare: false, max: 1 });
+  try {
+    await sql.begin(async (tx) => {
+      const claims = JSON.stringify({ sub: owner.id, role: "authenticated" });
+      await tx`select set_config('request.jwt.claims', ${claims}, true), set_config('role', 'authenticated', true)`;
+      await tx`select app.create_organization(
+        ${name}, ${slug}, 'institute', 'LK', 'Asia/Colombo', 'LKR', 'en-LK', 1::smallint)`;
+    });
+  } finally {
+    await sql.end();
+  }
+  return { slug, name };
 }

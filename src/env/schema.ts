@@ -4,6 +4,11 @@ export const clientEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
   NEXT_PUBLIC_SITE_URL: z.url(),
+  // Shows "Continue with Google" once the provider is configured in Supabase.
+  NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
 });
 
 const postgresUrl = z

@@ -11,7 +11,11 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",
-  expect: { timeout: 10_000 },
+  // Multi-step journeys make many round trips to the remote dev Supabase project.
+  timeout: 60_000,
+  expect: { timeout: 15_000 },
+  // Remote free-tier dev project: limit parallel load on Supabase Auth/DB.
+  workers: 2,
   use: { baseURL, trace: "on-first-retry" },
   projects: [
     { name: "desktop-chrome", use: { ...devices["Desktop Chrome"] } },

@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/page-header";
+import { MyInvitations } from "@/features/team/components/my-invitations";
 import { defaultLocale } from "@/i18n/config";
 import { requireUser } from "@/server/authz";
 import { createOrganization } from "@/features/orgs/actions";
@@ -37,6 +38,9 @@ export default async function OnboardingPage() {
   return (
     <>
       <PageHeader title={t("title")} description={t("description")} />
+      <Suspense>
+        <MyInvitations />
+      </Suspense>
       <Card>
         <CardContent>
           <Suspense fallback={<Skeleton className="h-96 w-full" />}>

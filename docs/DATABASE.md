@@ -36,8 +36,8 @@ organizations 1─* audit_log
 | `profiles` | id (= auth.users.id), full_name, phone, locale, avatar_path | Created by trigger on auth signup |
 | `organizations` | name, slug, kind `org_kind`, country (ISO 3166-1 alpha-2), timezone (IANA), currency (ISO 4217), default_locale (BCP 47), week_start (0–6), archived_at | slug unique; all required, set at creation (no country defaults in schema); future: plan fields |
 | `memberships` | org_id, user_id, role `member_role`, status `member_status`, joined_at | unique (org_id, user_id); trigger: ≥1 active owner per org |
-| `invitations` | org_id, email, role, token_hash, invited_by, expires_at, accepted_at, revoked_at | token stored as SHA-256 only |
-| `audit_log` | org_id, actor_id, action, entity_type, entity_id, metadata jsonb | Insert via admin path only; no PII in metadata |
+| `invitations` | org_id, email (lowercase), role (admin/teacher), token_hash, invited_by, expires_at, accepted_at, accepted_by, revoked_at | token stored as SHA-256 only (not user-selectable); role ≠ owner; 7-day expiry |
+| `audit_log` | id (bigserial), org_id, actor_id, action, entity_type, entity_id, metadata jsonb | Append-only: written only by SECURITY DEFINER functions in the same transaction as the change; no PII in metadata |
 
 ### Catalogue
 | `subjects` | org_id, name, code, archived_at | unique (org_id, lower(name)) |

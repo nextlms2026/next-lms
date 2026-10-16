@@ -6,7 +6,7 @@ import type { z } from "zod";
  * never raw database or auth errors.
  */
 export type FormState =
-  | { ok: true; message?: string }
+  | { ok: true; message?: string; data?: Record<string, string> }
   | {
       ok: false;
       error?: string;

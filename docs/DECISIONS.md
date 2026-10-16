@@ -62,3 +62,13 @@ Format: context → decision → consequences. Newest at the bottom. Status: Acc
 **Context:** Next 16 forms work natively with Server Actions and progressive enhancement.
 **Decision:** Standard forms use `useActionState` with Server Actions returning `FormState` (i18n message keys, echoed non-secret values). React Hook Form is used only where client-side dynamic state is substantial (e.g. bulk marks entry).
 **Consequences:** Less client JS, one validation path (server), forms work before hydration.
+
+## ADR-015 Invitations delivered as shareable links; accepted by verified email (2026-10-12)
+**Context:** No email provider yet (cost/approval deferred to M10); many tutors share links over WhatsApp anyway.
+**Decision:** Owners/admins create an invitation and receive a one-time link (copy / WhatsApp share). Acceptance requires the invitee's **verified** email to match the invited email; invitations addressed to a user's email are also listed after sign-in, so a lost link doesn't block joining. All membership writes go through audited SECURITY DEFINER functions.
+**Consequences:** Zero cost and works today; the token alone never grants access to the wrong person. Automatic invitation emails are an M10 add-on, not a redesign.
+
+## ADR-016 "Continue with Google" for staff sign-in (2026-10-16)
+**Context:** Teachers expected that being signed in to Google would let them join without another password; invite links cannot themselves authenticate (they may be forwarded).
+**Decision:** Add Supabase Google OAuth (free) alongside email/password on sign-in, sign-up and invite pages, behind `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED` so the button only appears once the provider is configured. Dedicated `/auth/callback` (OAuth failures are real failures, unlike email-link confirmation). Students without email keep username/password (M5).
+**Consequences:** Faster onboarding and fewer passwords; Google-verified emails satisfy invitation matching. Requires a Google Cloud OAuth client per environment (dev, prod). Other providers (Microsoft, Apple) can be added the same way later.

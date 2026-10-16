@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/forms/form-alert";
@@ -10,6 +11,7 @@ import { signUp } from "../actions";
 
 export function SignUpForm() {
   const t = useTranslations("auth");
+  const params = useSearchParams();
   const [state, action, pending] = useActionState<FormState, FormData>(
     signUp,
     null,
@@ -19,6 +21,7 @@ export function SignUpForm() {
   return (
     <form action={action} className="grid gap-4" noValidate>
       <FormAlert state={state} />
+      <input type="hidden" name="next" value={params.get("next") ?? ""} />
       <FormField
         name="fullName"
         label={t("fullName")}

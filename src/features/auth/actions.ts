@@ -71,7 +71,10 @@ export async function signUp(
     password: parsed.data.password,
     options: {
       data: { full_name: parsed.data.fullName },
-      emailRedirectTo: `${clientEnv.NEXT_PUBLIC_SITE_URL}/auth/confirm?next=/dashboard`,
+      // Keeps e.g. an invitation link through email confirmation (default template).
+      emailRedirectTo: `${clientEnv.NEXT_PUBLIC_SITE_URL}/auth/confirm?next=${encodeURIComponent(
+        safeRedirectPath(nextFrom(formData), "/dashboard"),
+      )}`,
     },
   });
   if (error) {
@@ -140,8 +143,42 @@ export async function updatePassword(
   redirect("/dashboard");
 }
 
-export async function signOut(): Promise<void> {
+export async function signOut(formData?: FormData): Promise<void> {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
-  redirect("/login");
+  const next = formData ? safeRedirectPath(nextFrom(formData), "") : "";
+  redirect(next ? `/login?next=${encodeURIComponent(next)}` : "/login");
+}
+
+function nextFrom(formData: FormData): string | null {
+  const v = formData.get("next");
+  return typeof v === "string" && v ? v : null;
+}
+
+/**
+ * Starts "Continue with Google" (Supabase OAuth, PKCE). Supabase sends the user
+ * back to /auth/callback, which exchanges the code for a session.
+ */
+export async function signInWithGoogle(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  if (!clientEnv.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED) {
+    return { ok: false, error: "googleUnavailable" };
+  }
+  const next = safeRedirectPath(nextFrom(formData), "/dashboard");
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${clientEnv.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
+      // Let people with several Google accounts choose the right one.
+      queryParams: { prompt: "select_account" },
+    },
+  });
+  if (error || !data.url) {
+    console.error("signInWithGoogle failed", { code: error?.code });
+    return { ok: false, error: "googleUnavailable" };
+  }
+  redirect(data.url);
 }

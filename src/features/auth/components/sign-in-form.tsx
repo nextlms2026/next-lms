@@ -29,6 +29,12 @@ export function SignInForm() {
           <AlertDescription>{t("signIn.linkError")}</AlertDescription>
         </Alert>
       ) : null}
+      {!state && params.get("error") === "oauth" ? (
+        <Alert variant="destructive">
+          <CircleAlert />
+          <AlertDescription>{t("google.failed")}</AlertDescription>
+        </Alert>
+      ) : null}
       {!state && params.get("notice") === "confirmed" ? (
         <Alert role="status">
           <CircleCheck className="text-success" />

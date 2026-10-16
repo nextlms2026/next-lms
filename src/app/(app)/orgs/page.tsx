@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/page-header";
+import { MyInvitations } from "@/features/team/components/my-invitations";
 import { listMyOrganizations } from "@/features/orgs/queries";
 
 export const metadata: Metadata = { title: "Your workspaces" };
@@ -49,6 +50,9 @@ export default async function OrgsPage() {
           <Button asChild variant="outline">
             <Link href="/onboarding">
               <Plus />
+              <Suspense>
+                <MyInvitations />
+              </Suspense>
               {t("createAnother")}
             </Link>
           </Button>

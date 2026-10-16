@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { AuthCard } from "@/components/auth-card";
+import { GoogleSignIn } from "@/features/auth/components/google-sign-in";
 import { SignInForm } from "@/features/auth/components/sign-in-form";
 
 export const metadata: Metadata = { title: "Sign in" };
@@ -27,7 +28,10 @@ export default async function LoginPage() {
     >
       {/* useSearchParams (next, error) is request data → Suspense. */}
       <Suspense>
-        <SignInForm />
+        <div className="grid gap-4">
+          <GoogleSignIn />
+          <SignInForm />
+        </div>
       </Suspense>
     </AuthCard>
   );

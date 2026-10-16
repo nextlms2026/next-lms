@@ -43,6 +43,13 @@ Adding a call site requires updating this table **and** `adminDbAllowlist` in `e
 | `app.is_org_member(org, roles)` | RLS helper; reads memberships without recursive RLS | Read-only, `stable`, returns boolean only |
 | `app.guard_last_owner()` (trigger) | Must see all owners regardless of caller RLS | Raises `last_owner` |
 | `app.handle_new_user()` (trigger on `auth.users`) | Creates the profile row | Insert of id + name only |
+| `app.create_invitation` / `revoke_invitation` | Invitations have no user write privileges | Owner: admin/teacher; admin: teacher only; never owner; 50/org/day; replaces previous pending invite |
+| `app.accept_invitation(token | id)` | Invitee is not yet a member | Token SHA-256 match or id; caller's **verified** email must equal invited email; single-use, 7-day expiry; never downgrades an active member |
+| `app.invitation_preview(token)` (also `anon`) | Landing page before sign-in | Returns only org name, role, masked email, status |
+| `app.my_pending_invitations()` | Show invites without the link | Matches caller's verified email only |
+| `app.list_team(org)` | Teammates' names for teachers; emails live in `auth.users` | Teachers: active names/roles only; owners/admins: + emails, inactive |
+| `app.change_member_role` / `set_member_status` | Membership writes | Roles: owner only. Status: owner any; admin teachers only; self may leave. Last-owner trigger applies. All audited |
+| `app.write_audit`, `app.caller_role`, `app.current_email` | Internal helpers | Not executable by users |
 All use `set search_path = ''`, live in the non-exposed `app` schema, and have `EXECUTE` revoked from `public`. Preferred over the admin client because the database itself enforces the rules (ADR-013).
 
 ## Table privileges
@@ -55,6 +62,12 @@ Beyond RLS, M2 revokes default Supabase grants: `anon` has no table access; `aut
 Buckets: `materials` (private, 25 MB), `submissions` (private, 10 MB). Paths: `org/{org_id}/class/{class_id}/{lesson|assignment}/{id}/{uuid}-{filename}`. Allowlist: PDF, images (jpg/png/webp), Office docs, plain text, zip (materials only). Storage RLS mirrors table access using path segments. Downloads via `/api/files/[id]` → check → signed URL (60 s).
 
 Video: R1 supports YouTube/Vimeo embeds stored as `video_provider` + `video_external_id`. **These are not access-controlled** — anyone with the link can watch. Staff UI warns about this. A signed-token provider (e.g. Bunny Stream / Cloudflare Stream) is a future, costed decision.
+
+## Google sign-in (OAuth)
+Supabase-managed OAuth with PKCE (code verifier cookie). The callback only redirects to same-origin paths (`safeRedirectPath`). Google accounts arrive with a verified email, so invitation matching by verified email is unchanged; Supabase links a Google identity to an existing account with the same verified email. Scopes: `openid email profile` only. The Google client secret lives only in the Supabase dashboard, never in this repo.
+
+## Invitation links
+Token = 256-bit random (base64url), shown once; DB stores SHA-256 only. Link pages are `noindex`; `Referrer-Policy` keeps the path from third parties. Delivery is by the inviter (copy / WhatsApp) until an email provider is added (ADR-015).
 
 ## Audited actions
 Membership invite/accept/role change/deactivate · ownership transfer · claim code issued/used · enrolment create/withdraw · class archive · student archive · attendance or marks edited >24 h after first entry. Metadata stores IDs and changed field names, not personal data.

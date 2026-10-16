@@ -10,7 +10,7 @@ Each milestone is a vertical slice (migration + RLS + server + UI + tests). Scop
 | M0 | Foundation docs + CLAUDE.md | – | ✅ |
 | M1 | Scaffold: Next.js, TS strict, Tailwind/shadcn, ESLint/Prettier, Vitest/Playwright, env validation, Supabase dev wiring, Drizzle + `db.rls`, `git init` | M0; user creates Supabase dev project | ✅ |
 | M2 | Auth, profiles, org creation, memberships, RLS helper functions, first isolation tests, app shell | M1 | ✅ (grade template choice moved to M4) |
-| M3 | Team: invitations, roles, deactivation, audit log | M2 | ⬜ |
+| M3 | Team: invitations, roles, deactivation, audit log | M2 | ✅ (invite delivery by shareable link; email in M10) |
 | M4 | Catalogue: subjects, grades (seeded from a template chosen on first visit), locations | M2 | ⬜ |
 | M5 | Students, classes, teacher assignment, enrolments, claim codes, student login | M3, M4 | ⬜ |
 | M6 | Schedules → sessions, timetable, Today screen, attendance | M5 | ⬜ |
@@ -27,7 +27,7 @@ Payments via a pluggable gateway layer (Stripe as default + regional gateways wh
 
 ## Open items / risks
 - Supabase free tier pauses after 7 days idle and has no backups → upgrade prod to Pro (~US$25/mo) before real student data. (Decide at M10.)
-- Custom SMTP provider for prod (Resend free tier likely) — needs approval at M3/M10.
+- Email provider (Resend free tier likely) — needs approval at M10; then send invitation emails automatically in addition to links.
 - RLS tests run against remote dev DB (slower; fixtures must clean up reliably).
 - Domain name needed by M10.
 - Prod Supabase region (data residency/latency for first target markets) — decide at M10.

@@ -36,7 +36,7 @@ async function OrgShell({
   children: React.ReactNode;
 }) {
   const { orgSlug } = await params;
-  const { org } = await requireOrgMember(orgSlug);
+  const { org, role } = await requireOrgMember(orgSlug);
   const t = await getTranslations("orgs.kindLabel");
 
   return (
@@ -49,11 +49,11 @@ async function OrgShell({
           </span>
           <span className="truncate font-medium">{org.name}</span>
         </div>
-        <OrgSidebarNav orgSlug={org.slug} />
+        <OrgSidebarNav orgSlug={org.slug} role={role} />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur sm:px-6">
-          <OrgMobileNav orgSlug={org.slug} orgName={org.name} />
+          <OrgMobileNav orgSlug={org.slug} orgName={org.name} role={role} />
           <span className="truncate font-medium md:hidden">{org.name}</span>
           <div className="ms-auto">
             <Suspense fallback={<AccountButtonSkeleton />}>
