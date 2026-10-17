@@ -163,7 +163,10 @@ export async function signInWithGoogle(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  if (!clientEnv.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED) {
+  if (
+    !clientEnv.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED ||
+    !(await isGoogleProviderEnabled())
+  ) {
     return { ok: false, error: "googleUnavailable" };
   }
   const next = safeRedirectPath(nextFrom(formData), "/dashboard");
@@ -181,4 +184,25 @@ export async function signInWithGoogle(
     return { ok: false, error: "googleUnavailable" };
   }
   redirect(data.url);
+}
+
+/**
+ * Asks Supabase whether the Google provider is switched on, so a misconfigured
+ * environment shows our message instead of Supabase's raw JSON error page.
+ */
+async function isGoogleProviderEnabled(): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `${clientEnv.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/settings`,
+      {
+        headers: { apikey: clientEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY },
+        cache: "no-store",
+      },
+    );
+    if (!res.ok) return false;
+    const settings = (await res.json()) as { external?: { google?: boolean } };
+    return settings.external?.google === true;
+  } catch {
+    return false;
+  }
 }
