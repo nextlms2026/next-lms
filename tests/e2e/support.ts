@@ -72,3 +72,38 @@ export async function createE2EOrg(owner: E2EUser, name: string) {
   }
   return { slug, name };
 }
+
+type CapturedEmail = {
+  to: string;
+  subject: string;
+  text: string;
+  html: string;
+};
+
+/** Newest email captured by EMAIL_TRANSPORT=test for `address` (waits briefly). */
+export async function latestEmailTo(address: string): Promise<CapturedEmail> {
+  const { readdir, readFile } = await import("node:fs/promises");
+  const dir = ".test-emails";
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const files = existsSync(dir) ? (await readdir(dir)).sort().reverse() : [];
+    for (const f of files) {
+      const raw = JSON.parse(await readFile(`${dir}/${f}`, "utf8")) as {
+        to: { address: string }[] | { address: string };
+        subject: string;
+        text: string;
+        html: string;
+      };
+      const to = Array.isArray(raw.to) ? raw.to[0]?.address : raw.to.address;
+      if (to === address)
+        return { to, subject: raw.subject, text: raw.text, html: raw.html };
+    }
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error(`No captured email for ${address}`);
+}
+
+export function inviteLinkFrom(email: CapturedEmail): string {
+  const m = email.text.match(/https?:\/\/\S+\/invite\/[A-Za-z0-9_-]{43}/);
+  if (!m) throw new Error("No invite link in email");
+  return m[0];
+}

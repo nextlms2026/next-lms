@@ -41,6 +41,38 @@ export const serverEnvSchema = z.object({
   DATABASE_MIGRATION_URL: postgresUrl.optional(),
 });
 
+/**
+ * Outgoing email (ADR-017). Unset EMAIL_TRANSPORT = disabled: invitations fall
+ * back to share-a-link. "test" writes messages to .test-emails/ (E2E only).
+ */
+export const emailEnvSchema = z
+  .object({
+    EMAIL_TRANSPORT: z.enum(["smtp", "test"]).optional(),
+    EMAIL_FROM: z.string().min(3).optional(),
+    SMTP_HOST: z.string().min(1).optional(),
+    SMTP_PORT: z.coerce.number().int().min(1).max(65535).optional(),
+    SMTP_USER: z.string().min(1).optional(),
+    SMTP_PASSWORD: z.string().min(1).optional(),
+  })
+  .refine(
+    (e) =>
+      e.EMAIL_TRANSPORT !== "smtp" ||
+      Boolean(
+        e.EMAIL_FROM &&
+        e.SMTP_HOST &&
+        e.SMTP_PORT &&
+        e.SMTP_USER &&
+        e.SMTP_PASSWORD,
+      ),
+    {
+      message:
+        "EMAIL_TRANSPORT=smtp requires EMAIL_FROM, SMTP_HOST, SMTP_PORT, SMTP_USER and SMTP_PASSWORD",
+      path: ["EMAIL_TRANSPORT"],
+    },
+  );
+
+export type EmailEnv = z.infer<typeof emailEnvSchema>;
+
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
 
 /**

@@ -82,4 +82,6 @@ Secrets live in `.env.local` (git-ignored) and Vercel env settings. `.env.exampl
 next-intl, English only in R1, strings in `messages/en.json`. Locale-aware date/number formatting via `Intl` with org timezone.
 
 ## Email
-Auth emails + invitations via Supabase Auth. Dev uses built-in SMTP (rate-limited). Prod requires custom SMTP (Resend candidate; approval needed before signup).
+**Outgoing app email** (invitations): `src/server/email` — provider-independent SMTP via nodemailer, configured by server-only env (`EMAIL_TRANSPORT`, `EMAIL_FROM`, `SMTP_*`). Unset → disabled and invitations fall back to share-a-link. `EMAIL_TRANSPORT=test` captures messages to `.test-emails/` (E2E forces this; tests never send real mail). Sending happens after the DB change commits; a failed send never undoes the invitation. Dev uses Gmail SMTP with an App password; production switches to Resend/SES + own domain via env only (ADR-017). `npm run db:check` verifies the SMTP login without sending.
+
+**Auth emails** (confirm signup, reset password): Auth emails + invitations via Supabase Auth. Dev uses built-in SMTP (rate-limited). Prod requires custom SMTP (Resend candidate; approval needed before signup).

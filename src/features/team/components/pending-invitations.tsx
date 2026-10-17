@@ -7,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/forms/form-alert";
 import type { FormState } from "@/lib/form-state";
 import type { MemberRole } from "@/server/authz";
-import { revokeInvitation } from "../actions";
+import { resendInvitation, revokeInvitation } from "../actions";
 
 export function PendingInvitations({
   orgSlug,
   invitations,
   callerRole,
+  emailEnabled,
 }: {
   orgSlug: string;
   invitations: {
@@ -22,11 +23,14 @@ export function PendingInvitations({
     expiresLabel: string;
   }[];
   callerRole: MemberRole;
+  /** Show "Resend" only when outgoing email is configured. */
+  emailEnabled: boolean;
 }) {
   const t = useTranslations("team");
   const tr = useTranslations("orgs.roles");
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<FormState>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   if (invitations.length === 0) {
     return (
@@ -37,6 +41,11 @@ export function PendingInvitations({
   return (
     <div className="grid gap-3">
       {result && !result.ok ? <FormAlert state={result} /> : null}
+      {notice ? (
+        <p role="status" className="text-sm text-success">
+          {notice}
+        </p>
+      ) : null}
       <ul className="divide-y rounded-lg border bg-card">
         {invitations.map((inv) => (
           <li
@@ -50,6 +59,30 @@ export function PendingInvitations({
               </span>
             </div>
             <Badge variant="secondary">{tr(inv.role)}</Badge>
+            {(callerRole === "owner" || inv.role === "teacher") &&
+            emailEnabled ? (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pending}
+                onClick={() =>
+                  startTransition(async () => {
+                    setNotice(null);
+                    const r = await resendInvitation(orgSlug, inv.id);
+                    setResult(r);
+                    if (r?.ok) {
+                      setNotice(
+                        r.data?.emailed === "true"
+                          ? t("pending.resent", { email: inv.email })
+                          : t("pending.resendFailed"),
+                      );
+                    }
+                  })
+                }
+              >
+                {t("pending.resend")}
+              </Button>
+            ) : null}
             {callerRole === "owner" || inv.role === "teacher" ? (
               <Button
                 variant="ghost"

@@ -48,3 +48,6 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# E2E email capture (EMAIL_TRANSPORT=test)
+/.test-emails/

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/page-header";
 import { requireOrgMember } from "@/server/authz";
+import { isEmailEnabled } from "@/server/email";
 import { createInvitation } from "@/features/team/actions";
 import { invitableRoles } from "@/features/team/permissions";
 import { listPendingInvitations, listTeam } from "@/features/team/queries";
@@ -45,6 +46,7 @@ async function Team({
               action={createInvitation.bind(null, org.slug)}
               roles={invitableRoles(role)}
               orgName={org.name}
+              emailEnabled={isEmailEnabled()}
             />
           </CardContent>
         </Card>
@@ -68,6 +70,7 @@ async function Team({
           <PendingInvitations
             orgSlug={org.slug}
             callerRole={role}
+            emailEnabled={isEmailEnabled()}
             invitations={invitations.map((i) => ({
               ...i,
               expiresLabel: date.format(i.expiresAt),

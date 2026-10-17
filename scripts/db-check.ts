@@ -4,12 +4,15 @@
  *   - publishable and secret API keys are accepted
  *   - both database URLs connect
  *   - the RLS context switch used by db.rls works (role + auth.uid())
+ *   - outgoing email (if configured) can log in to the SMTP server
  * Run: npm run db:check
  */
 import { loadEnvConfig } from "@next/env";
+import nodemailer from "nodemailer";
 import postgres from "postgres";
 import {
   clientEnvSchema,
+  emailEnvSchema,
   migrationUrl,
   serverEnvSchema,
 } from "../src/env/schema";
@@ -119,6 +122,35 @@ async function main() {
     fail(`RLS switch failed: ${e instanceof Error ? e.message : String(e)}`);
   } finally {
     await sql.end();
+  }
+
+  console.log("Email");
+  const email = emailEnvSchema.safeParse(process.env);
+  if (!email.success) {
+    for (const issue of email.error.issues)
+      fail(`${issue.path.join(".")}: ${issue.message}`);
+  } else if (email.data.EMAIL_TRANSPORT !== "smtp") {
+    ok("not configured — invitations are shared as links (optional)");
+  } else {
+    // Connects and authenticates only; sends nothing.
+    const transporter = nodemailer.createTransport({
+      host: email.data.SMTP_HOST,
+      port: email.data.SMTP_PORT,
+      secure: email.data.SMTP_PORT === 465,
+      auth: { user: email.data.SMTP_USER, pass: email.data.SMTP_PASSWORD },
+    });
+    try {
+      await transporter.verify();
+      ok(`SMTP login works (${email.data.SMTP_HOST}:${email.data.SMTP_PORT})`);
+    } catch (e) {
+      const { code, responseCode } = e as {
+        code?: string;
+        responseCode?: number;
+      };
+      fail(
+        `SMTP login failed (${code ?? ""} ${responseCode ?? ""}) — for Gmail use an App password, not the account password`,
+      );
+    }
   }
 }
 

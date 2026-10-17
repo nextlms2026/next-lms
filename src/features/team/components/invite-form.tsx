@@ -2,7 +2,14 @@
 
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Check, Copy, MessageCircle } from "lucide-react";
+import {
+  Check,
+  Copy,
+  MailCheck,
+  MessageCircle,
+  TriangleAlert,
+} from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormAlert } from "@/components/forms/form-alert";
@@ -15,9 +22,11 @@ type Props = {
   action: (state: FormState, formData: FormData) => Promise<FormState>;
   roles: readonly ("admin" | "teacher")[];
   orgName: string;
+  /** Outgoing email configured: the button sends instead of only creating a link. */
+  emailEnabled: boolean;
 };
 
-export function InviteForm({ action, roles, orgName }: Props) {
+export function InviteForm({ action, roles, orgName, emailEnabled }: Props) {
   const t = useTranslations("team");
   const tr = useTranslations("orgs.roles");
   const [state, formAction, pending] = useActionState<FormState, FormData>(
@@ -30,14 +39,32 @@ export function InviteForm({ action, roles, orgName }: Props) {
 
   if (link && state?.ok) {
     const shareText = t("invite.shareText", { org: orgName, link });
+    const values = {
+      email: state.data?.email ?? "",
+      role: tr(state.data?.role ?? "teacher"),
+    };
+    const emailed = state.data?.emailed === "true";
+    const emailEnabled = state.data?.emailEnabled === "true";
     return (
       <div className="grid gap-4">
-        <p className="text-sm">
-          {t("invite.created", {
-            email: state.data?.email ?? "",
-            role: tr(state.data?.role ?? "teacher"),
-          })}
-        </p>
+        {emailed ? (
+          <Alert role="status">
+            <MailCheck className="text-success" />
+            <AlertDescription>{t("invite.emailed", values)}</AlertDescription>
+          </Alert>
+        ) : emailEnabled ? (
+          <Alert role="alert">
+            <TriangleAlert className="text-warning" />
+            <AlertDescription>
+              {t("invite.emailFailed", values)}
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <p className="text-sm">{t("invite.created", values)}</p>
+        )}
+        {emailed ? (
+          <p className="text-sm text-muted-foreground">{t("invite.orShare")}</p>
+        ) : null}
         <div className="flex gap-2">
           <Input
             value={link}
@@ -94,7 +121,11 @@ export function InviteForm({ action, roles, orgName }: Props) {
         error={failed?.fieldErrors?.role}
       />
       <Button type="submit" disabled={pending}>
-        {pending ? t("invite.pending") : t("invite.submit")}
+        {pending
+          ? t("invite.pending")
+          : emailEnabled
+            ? t("invite.submitEmail")
+            : t("invite.submit")}
       </Button>
     </form>
   );

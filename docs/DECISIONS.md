@@ -72,3 +72,8 @@ Format: context → decision → consequences. Newest at the bottom. Status: Acc
 **Context:** Teachers expected that being signed in to Google would let them join without another password; invite links cannot themselves authenticate (they may be forwarded).
 **Decision:** Add Supabase Google OAuth (free) alongside email/password on sign-in, sign-up and invite pages, behind `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED` so the button only appears once the provider is configured. Dedicated `/auth/callback` (OAuth failures are real failures, unlike email-link confirmation). Students without email keep username/password (M5).
 **Consequences:** Faster onboarding and fewer passwords; Google-verified emails satisfy invitation matching. Requires a Google Cloud OAuth client per environment (dev, prod). Other providers (Microsoft, Apple) can be added the same way later.
+
+## ADR-017 Outgoing email via an SMTP abstraction; Gmail for now (2026-10-18)
+**Context:** Admins expect invitations to be emailed automatically with confirmation. No domain yet; an email provider was originally deferred to M10.
+**Decision:** `src/server/email` sends through SMTP (nodemailer) configured by env. Dev/pilots use Gmail SMTP from nextlms2026@gmail.com with an App password (~500/day, any recipient). Invitations are emailed after creation; the admin sees "Invitation emailed to …", with copy/WhatsApp kept as a fallback; "Resend" issues a fresh link. Email is optional: unset env = link-only.
+**Consequences:** Works today at zero cost. Gmail deliverability and limits are not production-grade: before public launch, switch to Resend/SES with an own domain (env change only) and point Supabase Auth SMTP at the same provider.

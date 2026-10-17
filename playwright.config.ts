@@ -29,5 +29,8 @@ export default defineConfig({
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 300_000,
+        // Never send real email from tests: capture to .test-emails/ instead.
+        // (process env overrides .env.local in Next.js.)
+        env: { ...process.env, EMAIL_TRANSPORT: "test" },
       },
 });

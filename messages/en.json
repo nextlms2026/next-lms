@@ -195,14 +195,21 @@
       "copied": "Copied",
       "whatsapp": "Share on WhatsApp",
       "another": "Invite someone else",
-      "shareText": "You are invited to join {org} on next-lms: {link}"
+      "shareText": "You are invited to join {org} on next-lms: {link}",
+      "emailed": "Invitation emailed to {email} as {role}. It works once and expires in 7 days.",
+      "emailFailed": "Invitation created for {email}, but the email could not be sent. Share the link below instead.",
+      "orShare": "You can also share the link yourself:",
+      "submitEmail": "Send invitation"
     },
     "pending": {
       "title": "Pending invitations",
       "empty": "No pending invitations.",
       "expires": "Expires {date}",
       "revoke": "Revoke",
-      "resendHint": "Lost the link? Invite the same email again — a new link replaces the old one."
+      "resendHint": "Resending emails a fresh link; the previous link stops working.",
+      "resend": "Resend",
+      "resent": "A new invitation was emailed to {email}. The previous link no longer works.",
+      "resendFailed": "A new link was created, but the email could not be sent. Use “Invite” to get a shareable link."
     },
     "mine": {
       "title": "You have been invited",
@@ -254,6 +261,17 @@
       "member_reactivated": "reactivated a member ({role})",
       "member_left": "left the workspace",
       "unknown": "made a change"
+    }
+  },
+  "emails": {
+    "invitation": {
+      "subject": "{inviter} invited you to {org} on next-lms",
+      "heading": "Join {org} on next-lms",
+      "intro": "{inviter} has invited you to join {org} as {role}. Accept the invitation to get started.",
+      "button": "Accept invitation",
+      "expiry": "This invitation works once and expires in 7 days.",
+      "fallback": "If the button does not work, copy this link into your browser:",
+      "ignore": "If you were not expecting this invitation, you can ignore this email."
     }
   }
 }

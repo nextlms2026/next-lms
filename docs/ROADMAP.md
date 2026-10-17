@@ -27,7 +27,7 @@ Payments via a pluggable gateway layer (Stripe as default + regional gateways wh
 
 ## Open items / risks
 - Supabase free tier pauses after 7 days idle and has no backups → upgrade prod to Pro (~US$25/mo) before real student data. (Decide at M10.)
-- Email provider (Resend free tier likely) — needs approval at M10; then send invitation emails automatically in addition to links.
+- Invitation emails: done via Gmail SMTP for dev/pilots (ADR-017). Before public launch (M10): own domain + Resend/SES, and use the same SMTP for Supabase Auth emails.
 - RLS tests run against remote dev DB (slower; fixtures must clean up reliably).
 - Domain name needed by M10.
 - Prod Supabase region (data residency/latency for first target markets) — decide at M10.

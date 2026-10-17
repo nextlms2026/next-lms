@@ -67,7 +67,10 @@ Video: R1 supports YouTube/Vimeo embeds stored as `video_provider` + `video_exte
 Supabase-managed OAuth with PKCE (code verifier cookie). The callback only redirects to same-origin paths (`safeRedirectPath`). Google accounts arrive with a verified email, so invitation matching by verified email is unchanged; Supabase links a Google identity to an existing account with the same verified email. Scopes: `openid email profile` only. The Google client secret lives only in the Supabase dashboard, never in this repo.
 
 ## Invitation links
-Token = 256-bit random (base64url), shown once; DB stores SHA-256 only. Link pages are `noindex`; `Referrer-Policy` keeps the path from third parties. Delivery is by the inviter (copy / WhatsApp) until an email provider is added (ADR-015).
+Token = 256-bit random (base64url), shown once to the inviter and sent in the invitation email; DB stores SHA-256 only. Link pages are `noindex`; `Referrer-Policy` keeps the path from third parties. Possessing the link is never enough: acceptance requires the invited verified email.
+
+## Outgoing email
+SMTP credentials are server-only env vars (Gmail **App password**, never the account password). Logs record only provider error codes — never recipients, links or bodies. Org/inviter names are HTML-escaped in templates. 50 invitations/org/day (SQL). SPF/DKIM come from the sender (Gmail now; own domain at M10).
 
 ## Audited actions
 Membership invite/accept/role change/deactivate · ownership transfer · claim code issued/used · enrolment create/withdraw · class archive · student archive · attendance or marks edited >24 h after first entry. Metadata stores IDs and changed field names, not personal data.

@@ -5,6 +5,8 @@ import {
   createE2EOrg,
   createE2EUser,
   deleteE2EUser,
+  inviteLinkFrom,
+  latestEmailTo,
   type E2EUser,
 } from "./support";
 
@@ -45,7 +47,7 @@ test.afterAll(async () => {
   if (teacher) await deleteE2EUser(teacher);
 });
 
-test("owner invites a teacher by link; teacher joins with limited access; owner deactivates", async ({
+test("owner emails an invitation (and resends); teacher joins with limited access; owner deactivates", async ({
   browser,
 }) => {
   const ownerCtx = await browser.newContext();
@@ -54,20 +56,40 @@ test("owner invites a teacher by link; teacher joins with limited access; owner 
   const teacherPage = await teacherCtx.newPage();
   const orgPath = `/o/${org.slug}`;
 
-  // --- Owner creates an invite link.
+  // --- Owner sends an invitation; it is emailed automatically.
   await ownerPage.goto(`${orgPath}/team`);
   await signIn(ownerPage, owner);
   await expect(ownerPage).toHaveURL(new RegExp(`${orgPath}/team$`));
   await ownerPage.getByLabel("Email address").fill(teacher.email);
   await ownerPage.getByLabel("Role").selectOption("teacher");
-  await ownerPage.getByRole("button", { name: "Create invite link" }).click();
+  await ownerPage.getByRole("button", { name: "Send invitation" }).click();
+  await expect(ownerPage.getByRole("status")).toContainText(
+    `Invitation emailed to ${teacher.email} as Teacher`,
+  );
   const linkBox = ownerPage.getByLabel("Invitation link");
-  await expect(linkBox).toHaveValue(/\/invite\/[A-Za-z0-9_-]{43}$/);
-  const link = await linkBox.inputValue();
-  await shot(ownerPage, "10-team-invite-link");
+  const firstLink = await linkBox.inputValue();
+  const firstEmail = await latestEmailTo(teacher.email);
+  expect(firstEmail.subject).toBe(
+    `${owner.fullName} invited you to ${org.name} on next-lms`,
+  );
+  expect(inviteLinkFrom(firstEmail)).toBe(firstLink); // same link in UI and email
+  await shot(ownerPage, "10-team-invite-emailed");
 
+  // --- Resend: a fresh link is emailed and the old one stops working.
   await ownerPage.reload();
-  await expect(ownerPage.getByText(teacher.email)).toBeVisible(); // pending list
+  const pendingRow = ownerPage
+    .getByRole("listitem")
+    .filter({ hasText: teacher.email });
+  await pendingRow.getByRole("button", { name: "Resend" }).click();
+  await expect(ownerPage.getByRole("status")).toContainText(
+    `A new invitation was emailed to ${teacher.email}`,
+  );
+  const link = inviteLinkFrom(await latestEmailTo(teacher.email));
+  expect(link).not.toBe(firstLink);
+  await teacherPage.goto(new URL(firstLink).pathname);
+  await expect(
+    teacherPage.getByRole("heading", { name: "Invitation cancelled" }),
+  ).toBeVisible();
 
   // --- Teacher opens the link signed out, signs in, accepts.
   await teacherPage.goto(new URL(link).pathname);
