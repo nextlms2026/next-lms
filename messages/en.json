@@ -113,9 +113,16 @@
     "emptyBody": "Once you add classes and timetables, today's sessions appear here so you can take attendance in a few taps."
   },
   "settings": {
-    "title": "Workspace settings",
+    "title": "Settings",
     "description": "Regional settings used for dates, times and fees across this workspace.",
-    "readOnly": "Only the workspace owner can change these settings."
+    "readOnly": "Only the workspace owner can change these settings.",
+    "tabs": {
+      "label": "Settings sections",
+      "organisation": "Organisation",
+      "subjects": "Subjects",
+      "grades": "Grade levels",
+      "locations": "Locations"
+    }
   },
   "account": {
     "title": "Your account",
@@ -154,7 +161,8 @@
     "lastOwner": "A workspace must keep at least one owner. Make someone else an owner first.",
     "invalidInvitation": "This invitation is no longer valid. Ask for a new link.",
     "invitationEmailMismatch": "This invitation was sent to a different email address. Sign in with that address to accept it.",
-    "googleUnavailable": "Google sign-in is not available right now. Please use your email and password."
+    "googleUnavailable": "Google sign-in is not available right now. Please use your email and password.",
+    "duplicateName": "An active item with this name already exists."
   },
   "messages": {
     "saved": "Changes saved.",
@@ -272,6 +280,63 @@
       "expiry": "This invitation works once and expires in 7 days.",
       "fallback": "If the button does not work, copy this link into your browser:",
       "ignore": "If you were not expecting this invitation, you can ignore this email."
+    }
+  },
+  "catalogue": {
+    "archived": "Archived",
+    "archive": "Archive",
+    "restore": "Restore",
+    "showArchived": "Show archived ({count})",
+    "hideArchived": "Hide archived",
+    "archiveHint": "Archived items stay on past classes and records but can’t be chosen for new ones.",
+    "editItem": "Edit {name}",
+    "moveUp": "Move {name} up",
+    "moveDown": "Move {name} down",
+    "subjects": {
+      "description": "Subjects you teach, e.g. Physics or Combined Maths. Used when creating classes.",
+      "name": "Subject name",
+      "code": "Code",
+      "codeHint": "Optional short code, e.g. PHY.",
+      "add": "Add subject",
+      "edit": "Edit subject",
+      "empty": "No subjects yet."
+    },
+    "grades": {
+      "description": "The grade levels or years your classes are for, in teaching order.",
+      "name": "Grade level name",
+      "add": "Add grade level",
+      "edit": "Edit grade level",
+      "empty": "No grade levels yet.",
+      "template": {
+        "title": "Start from a grade system",
+        "description": "Pick the system closest to yours. You can rename, reorder, add or archive levels afterwards.",
+        "label": "Grade system",
+        "submit": "Add these grade levels",
+        "pending": "Adding…",
+        "names": {
+          "generic": "Generic",
+          "lk": "Sri Lanka",
+          "gb": "United Kingdom (England & Wales)",
+          "us": "United States",
+          "in": "India"
+        }
+      }
+    },
+    "locations": {
+      "description": "Where classes happen: institutes, halls, homes or online.",
+      "name": "Location name",
+      "kind": "Type",
+      "address": "Address",
+      "addressHint": "Optional. Shown to teachers, and later to students of classes held here.",
+      "add": "Add location",
+      "edit": "Edit location",
+      "empty": "No locations yet.",
+      "kinds": {
+        "institute": "Institute",
+        "hall": "Hall",
+        "home": "Home",
+        "online": "Online"
+      }
     }
   }
 }

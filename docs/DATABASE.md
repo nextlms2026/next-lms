@@ -40,10 +40,10 @@ organizations 1─* audit_log
 | `audit_log` | id (bigserial), org_id, actor_id, action, entity_type, entity_id, metadata jsonb | Append-only: written only by SECURITY DEFINER functions in the same transaction as the change; no PII in metadata |
 
 ### Catalogue
-| `subjects` | org_id, name, code, archived_at | unique (org_id, lower(name)) |
+| `subjects` | org_id, name, code, archived_at | unique (org_id, lower(name)) among active rows; archive, never delete |
 |---|---|---|
-| `grade_levels` | org_id, name, sort_order, archived_at | seeded at org creation from an education-system template (static config in code, e.g. generic, LK, UK, US, IN); editable per org |
-| `locations` | org_id, name, kind `location_kind`, address, archived_at | |
+| `grade_levels` | org_id, name, sort_order, archived_at | seeded on first visit to Settings → Grade levels from a template in `src/features/catalogue/grade-templates.ts` (generic, LK, GB, US, IN; suggested by org country); editable/reorderable; unique active name |
+| `locations` | org_id, name, kind `location_kind`, address, archived_at | unique active name. RLS for all three: members read; owners/admins insert/update (column grants); no delete |
 
 ### Students & classes
 | Table | Key columns | Constraints / notes |

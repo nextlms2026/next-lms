@@ -1,3 +1,4 @@
 // Drizzle table definitions, one file per domain area (see docs/DATABASE.md).
 export * from "./identity";
 export * from "./team";
+export * from "./catalogue";

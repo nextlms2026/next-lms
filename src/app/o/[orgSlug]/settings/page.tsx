@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PageHeader } from "@/components/page-header";
 import { defaultLocale } from "@/i18n/config";
 import { requireOrgMember } from "@/server/authz";
 import { updateOrganization } from "@/features/orgs/actions";
@@ -54,7 +53,9 @@ export default async function SettingsPage({
   const t = await getTranslations("settings");
   return (
     <>
-      <PageHeader title={t("title")} description={t("description")} />
+      <p className="mb-4 max-w-prose text-sm text-muted-foreground">
+        {t("description")}
+      </p>
       <Suspense fallback={<Skeleton className="h-96 w-full" />}>
         <Settings params={params} />
       </Suspense>
